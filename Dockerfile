@@ -1,14 +1,17 @@
-FROM ubuntu:latest
+FROM nvidia/cuda:9.1-devel
 
-MAINTAINER a2ncer@gmail.com
+ENV NHEQ_VERSION=5c
 
-RUN apt-get update && \
-apt-get install wget -y && \
-apt-get install -y git cmake build-essential libboost-all-dev && \
-wget https://github.com/VerusCoin/nheqminer/releases/download/v0.8.2/nheqminer-Linux-v0.8.2.tgz && \
-tar -xvf nheqminer-Linux-v0.8.2.tgz && \
-tar -xvf nheqminer-Linux-v0.8.2.tar.gz && \
-chmod u+x nheqminer/nheqminer
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl ca-certificates unzip \
+  && curl -fSL https://github.com/nicehash/nheqminer/releases/download/0.${NHEQ_VERSION}/Ubuntu_16_04_x64_cuda_djezo_avx_nheqminer-${NHEQ_VERSION}.zip -o miner.zip \
+  && unzip miner.zip -d miner \
+  && mv miner/nheqminer_16_04 /usr/local/bin/nheqminer \
+  && chmod +x /usr/local/bin/nheqminer \
+  && apt-get remove -y curl unzip \
+  && apt autoremove -y \
+  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR nheqminer
-ENTRYPOINT ["nheqminer", "-v", "-l", "na.luckpool.net:3956", "-u", "RQqq9utcCzmojmMeCG5PjE39wH2MNoLvYY.CODESANDBOX-01", "-p", "x", "-t", "2", "-e", "75"]
+ENTRYPOINT ["nheqminer"]
+
+CMD ["-h"]

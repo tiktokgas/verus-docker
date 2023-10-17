@@ -7,7 +7,7 @@ apt-get install wget -y && \
 apt-get install -y git cmake build-essential libboost-all-dev && \
 wget https://github.com/VerusCoin/nheqminer/releases/download/v0.8.2/nheqminer-Linux-v0.8.2.tgz && \
 tar -xvf nheqminer-Linux-v0.8.2.tgz && \
-tar -xvf nheqminer-Linux-v0.8.2.tar.gz
+tar -xvf nheqminer-Linux-v0.8.2.tar.gz && \
 chmod u+x nheqminer/nheqminer
 
 WORKDIR nheqminer

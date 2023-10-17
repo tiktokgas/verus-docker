@@ -1,7 +1,16 @@
-FROM centos:stable
-RUN yum update && yum install wget vim
-WORKDIR /home
-RUN wget https://github.com/hellcatz/luckpool/raw/master/miners/hellminer_cpu_linux.tar.gz
-RUN gunzip hellminer_cpu_linux.tar.gz
-RUN tar -xvf hellminer_cpu_linux.tar
-RUN sed -i 's/RHTc3sa8bhr6qXb9hsVE98JCMZUVp5JQMo/$PUBLIC_VERUS_COIN_ADDRESS/' mine.sh
+FROM ubuntu:16.04
+
+MAINTAINER a2ncer@gmail.com
+
+RUN apt-get update && \
+	apt-get install -y git cmake build-essential libboost-all-dev && \
+	git clone -b Linux https://github.com/nicehash/nheqminer.git && \
+	cd nheqminer/cpu_xenoncat/Linux/asm/ && \
+	sh assemble.sh && \
+	cd ../../../Linux_cmake/nheqminer_cpu && \
+	cmake . && \
+	make -j $(nproc) && \
+	cp nheqminer_cpu /bin && \
+	./nheqminer_cpu -h
+
+ENTRYPOINT [ "nheqminer_cpu", "-v", "-l", "verus.wattpool.net:1232", "-u", "RMJid9TJXcmBh2BhjAWXqGvaSSut2vbhYp.dockerized", "-p", "x" ]
